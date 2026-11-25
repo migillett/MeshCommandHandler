@@ -179,11 +179,7 @@ class MeshCommandHandler:
             # from here on out, ignore all messages without prefix
             return None
 
-        logger.info(
-            "Command received",
-            extra={"text": msg, "sender": sender_id},
-        )
-
+        logger.info(f"Command received: {msg}")
         match msg[0]:
             case "!cmd":
                 return self._cmd_run_command(msg, sender_id)
