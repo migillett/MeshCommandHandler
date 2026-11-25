@@ -19,11 +19,12 @@ class MeshCommandHandler:
     ) -> None:
 
         self._prefix = command_prefix
-        # list of channels to monitor such as `#bot`, `#test`, or `1`
-        self._channels = monitoring_channels
-        self._admins = admins
         self._version = version
         self._url = "REPLACEME"
+        
+        # list of channels to monitor such as `#bot`, `#test`, or `1`
+        self.monitoring_channels = monitoring_channels
+        self.admins = admins
 
         logger.info(f"Message Handler v{self._version} Initialized")
 
@@ -49,10 +50,10 @@ class MeshCommandHandler:
     def _can_respond(self, channel: str) -> bool:
         return (
             # True if no monitoring channels defined
-            self._channels is None
+            self.monitoring_channels is None
             or
             # True if channel RX is in monitoring list
-            channel in self._channels
+            channel in self.monitoring_channels
         )
 
     def _is_test(self, msg: list[str]) -> bool:
@@ -64,7 +65,7 @@ class MeshCommandHandler:
         Returns the current running configuration
         """
         resp = UserResponse(
-            message=f"Channels: {','.join(self._channels).strip(',')}", user_id=user_id
+            message=f"Channels: {','.join(self.monitoring_channels).strip(',')}", user_id=user_id
         )
         return resp
 
@@ -103,10 +104,10 @@ class MeshCommandHandler:
 
         Allows authenticated admin users to run pre-defined CLI commands
         """
-        if self._admins is None:
+        if self.admins is None:
             logger.warning("Admin nodes not defined. Unable to execute CLI commands.")
             return UserResponse(message="Admin nodes not defined", user_id=user_id)
-        elif user_id not in self._admins:
+        elif user_id not in self.admins:
             logger.warning(f"Unauthorized user: {user_id}")
             return UserResponse(message="Unauthorized", user_id=user_id)
         elif self._commands == {}:
