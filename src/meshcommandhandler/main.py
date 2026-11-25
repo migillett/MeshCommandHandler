@@ -3,6 +3,8 @@ import logging
 from json import load
 from os import path
 
+from meshcommandhandler import __version__
+
 from .models import Coordinates, UserResponse
 
 logger = logging.getLogger(__name__)
@@ -13,14 +15,13 @@ class MeshCommandHandler:
         self,
         command_prefix: str = "!",
         admins: list[str] | None = None,
-        version: str = "debug",
         commands_json: str | None = None,
     ) -> None:
 
         self._prefix = command_prefix
-        self._version = version
-        self._url = "REPLACEME"
         self._admins = admins
+        self._version = __version__
+        self._url = "https://github.com/migillett/MeshCommandHandler"
         logger.info(f"Message Handler v{self._version} Initialized")
 
         self._coordinates: Coordinates | None = None
