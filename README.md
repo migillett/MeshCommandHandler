@@ -4,7 +4,6 @@ This package is meant to be a one-stop-shop for handling commands sent via mesh 
 
 Some examples of commands include:
 - `!w`: Get, Set waypoints
-- `!c`: Return the current configuration
 - `!i`: Get service information (version, repo URL)
 - `!h`: Get a list of commands
 

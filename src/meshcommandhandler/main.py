@@ -3,7 +3,7 @@ import logging
 from json import load
 from os import path
 
-from .models import ChannelResponse, Coordinates, UserResponse
+from .models import Coordinates, UserResponse
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,6 @@ class MeshCommandHandler:
     def __init__(
         self,
         command_prefix: str = "!",
-        monitoring_channels: list[str, int] | None = None,
         admins: list[str] | None = None,
         version: str = "debug",
         commands_json: str | None = None,
@@ -21,11 +20,7 @@ class MeshCommandHandler:
         self._prefix = command_prefix
         self._version = version
         self._url = "REPLACEME"
-        
-        # list of channels to monitor such as `#bot`, `#test`, or `1`
-        self.monitoring_channels = monitoring_channels
-        self.admins = admins
-
+        self._admins = admins
         logger.info(f"Message Handler v{self._version} Initialized")
 
         self._coordinates: Coordinates | None = None
@@ -47,27 +42,18 @@ class MeshCommandHandler:
     def _rejoin_msg(self, message_list: list[str]) -> str:
         return " ".join(message_list).strip()
 
-    def _can_respond(self, channel: str) -> bool:
-        return (
-            # True if no monitoring channels defined
-            self.monitoring_channels is None
-            or
-            # True if channel RX is in monitoring list
-            channel in self.monitoring_channels
-        )
-
     def _is_test(self, msg: list[str]) -> bool:
         return len(msg) > 0 and msg[0] in ["test", "testing", "ping"]
 
-    def _cmd_config(self, user_id: str) -> str:
-        """1 - !c: Current config
+    # def _cmd_config(self, user_id: str) -> str:
+    #     """1 - !c: Current config
 
-        Returns the current running configuration
-        """
-        resp = UserResponse(
-            message=f"Channels: {','.join(self.monitoring_channels).strip(',')}", user_id=user_id
-        )
-        return resp
+    #     Returns the current running configuration
+    #     """
+    #     resp = UserResponse(
+    #         message="TODO", user_id=user_id
+    #     )
+    #     return resp
 
     def _cmd_waypoints(self, msg: list[str], user_id: str) -> list:
         """2 - !w: Get/Set waypoints
@@ -104,10 +90,10 @@ class MeshCommandHandler:
 
         Allows authenticated admin users to run pre-defined CLI commands
         """
-        if self.admins is None:
+        if self._admins is None:
             logger.warning("Admin nodes not defined. Unable to execute CLI commands.")
             return UserResponse(message="Admin nodes not defined", user_id=user_id)
-        elif user_id not in self.admins:
+        elif user_id not in self._admins:
             logger.warning(f"Unauthorized user: {user_id}")
             return UserResponse(message="Unauthorized", user_id=user_id)
         elif self._commands == {}:
@@ -171,20 +157,16 @@ class MeshCommandHandler:
         return UserResponse(user_id=user_id, message=cmd_str)
 
     def handle(
-        self, text: str, sender_id: str, channel: str
-    ) -> ChannelResponse | UserResponse | None:
+        self, text: str, sender_id: str
+    ) -> UserResponse | None:
         """Core of the Message Handler
 
-        If returns ChannelResponse or UserResponse, command accepted.
+        If returns UserResponse, command accepted.
         If returns None, no action required
         """
 
         msg = self._prepare_message(text)
         if len(msg) == 0:
-            return None
-
-        elif not self._can_respond(channel):
-            logger.debug(f"Ignoring message from channel: {channel}")
             return None
 
         elif self._is_test(msg):
@@ -198,12 +180,10 @@ class MeshCommandHandler:
 
         logger.info(
             "Command received",
-            extra={"text": msg, "sender": sender_id, "channel": channel},
+            extra={"text": msg, "sender": sender_id},
         )
 
         match msg[0]:
-            case "!c":
-                return self._cmd_config(sender_id)
             case "!cmd":
                 return self._cmd_run_command(msg, sender_id)
             case "!w":

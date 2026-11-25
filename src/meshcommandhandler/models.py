@@ -1,20 +1,10 @@
 from pydantic import BaseModel, Field
 
 
-class ResponseBase(BaseModel):
-    message: str
-
-
-class UserResponse(ResponseBase):
+class UserResponse(BaseModel):
     """Designates when we need to send a DM to a specific user"""
-
+    message: str
     user_id: str
-
-
-class ChannelResponse(ResponseBase):
-    """Designates when we need to send a response to a specific channel"""
-
-    channel_id: str
 
 
 class Coordinates(BaseModel):
