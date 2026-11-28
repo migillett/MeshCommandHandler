@@ -1,10 +1,11 @@
-# Message Handler
+# Mesh Command Handler
 
 This package is meant to be a one-stop-shop for handling commands sent via mesh nodes (Meshtastic, Meshcore, Reticulum). It's desinged to be short, simple, and useful.
 
 Some examples of commands include:
 - `!w`: Get, Set waypoints
 - `!i`: Get service information (version, repo URL)
+- `!cmd`: Run pre-set CLI commands (see below)
 - `!h`: Get a list of commands
 
 More commands are on the way, so check back.
@@ -41,6 +42,10 @@ You can only execute commands as defined in the JSON file keys. So if someone se
 - Turn on / off WiFi ad-hoc hotspots on Raspberry Pi Nodes
 - Trigger remote updates without logging in to SSH (at your own risk)
 - Trigger shell commands such as `rsync` backups
+
+## To Do / Tentative Features
+
+- Handling alerts to admins when certain criteria is met, such as node ID within set coordinate range, low battery, or high humidity
 
 ## Contributing
 
