@@ -51,6 +51,10 @@ def test_waypoints(handler: MeshCommandHandler) -> None:
     resp = handler.handle("!w 100.00,-200.00", "test")
     assert resp.message == "Invalid input"
 
+    # not defined yet
+    resp = handler.handle("!w", "test")
+    assert resp.message == "No coordinates defined"
+
     # missing ','
     resp = handler.handle("!w 33.7449682", "test")
     assert resp.message == "Invalid input"
@@ -61,6 +65,7 @@ def test_waypoints(handler: MeshCommandHandler) -> None:
     resp = handler.handle("!w", "test")
     # round to 6 decimal places
     assert resp.message == "33.744968,-84.389908"
+    assert resp.user_id == "test"
 
 
 def test_commands(handler: MeshCommandHandler) -> None:

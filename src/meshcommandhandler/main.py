@@ -56,7 +56,7 @@ class MeshCommandHandler:
     #     )
     #     return resp
 
-    def _cmd_waypoints(self, msg: list[str], user_id: str) -> list:
+    def _cmd_waypoints(self, msg: list[str], user_id: str) -> UserResponse:
         """2 - !w: Get/Set waypoints
 
         Allows user to submit or request waypoints from the server
@@ -70,11 +70,17 @@ class MeshCommandHandler:
         if len(msg) > 2:
             return UserResponse(message="Invalid input", user_id=user_id)
 
-        elif len(msg) == 1:
-            return UserResponse(
-                message=self._coordinates.to_message(),
-                user_id=user_id,
-            )
+        elif msg == ["!w"]:
+            if self._coordinates is not None:
+                return UserResponse(
+                    message=self._coordinates.to_message(),
+                    user_id=user_id,
+                )
+            else:
+                return UserResponse(
+                    message="No coordinates defined",
+                    user_id=user_id
+                )
 
         try:
             c = msg[1].split(",")
