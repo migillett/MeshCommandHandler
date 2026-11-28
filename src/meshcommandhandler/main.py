@@ -164,7 +164,7 @@ class MeshCommandHandler:
         return UserResponse(user_id=user_id, message=cmd_str)
 
     def handle(
-        self, text: str, sender_id: str
+        self, text: str, sender_id: str, hops: int | None = None
     ) -> UserResponse | None:
         """Core of the Message Handler
 
@@ -177,8 +177,11 @@ class MeshCommandHandler:
             return None
 
         elif self._is_test(msg):
+            msg = f"Test message received: {self._rejoin_msg(msg)}"
+            if hops is not None:
+                msg = f'Test message heard {hops} hops away'
             return UserResponse(
-                user_id=sender_id, message=f"Test received: {self._rejoin_msg(msg)}"
+                user_id=sender_id, message=msg
             )
 
         elif not msg[0].startswith(self._prefix):

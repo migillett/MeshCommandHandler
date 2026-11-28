@@ -35,7 +35,9 @@ def test_no_command(handler: MeshCommandHandler) -> None:
 def test_test_message(handler: MeshCommandHandler) -> None:
     msg = "test"
     resp = handler.handle(msg, sender_id="test ")
-    assert resp.message == "Test received: test"
+    assert resp.message == "Test message received: test"
+    resp = handler.handle(msg, sender_id="test ", hops=6)
+    assert resp.message == "Test message heard 6 hops away"
 
 
 def test_waypoints(handler: MeshCommandHandler) -> None:
